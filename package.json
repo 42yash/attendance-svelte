@@ -37,5 +37,9 @@
 		"vite": "^5.0.3",
 		"vitest": "^1.2.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@rollup/plugin-replace": "^5.0.5",
+		"dotenv": "^16.4.4"
+	}
 }
