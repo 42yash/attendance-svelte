@@ -4,9 +4,15 @@
 	let reason = '';
 	let description = '';
 	let file;
+	let formData;
 
 	function handleSubmit() {
-		console.log('Submitted');
+		formData = {
+			reason,
+			description,
+			file
+		};
+		console.log(formData);
 	}
 </script>
 
