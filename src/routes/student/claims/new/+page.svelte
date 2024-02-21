@@ -1,5 +1,4 @@
 <script>
-	import { writable } from 'svelte/store';
 	import AttendanceTable from '../../AttendanceTable.svelte';
 
 	let reason = '';
@@ -7,7 +6,7 @@
 	let file;
 
 	function handleSubmit() {
-		// Handle form submission...
+		console.log('Submitted');
 	}
 </script>
 

@@ -30,7 +30,6 @@
 	});
 
 	function processAttendanceData(rawData) {
-		console.log(rawData);
 		let dataByDate = {};
 
 		// Assuming these are all the periods you want to show
@@ -58,7 +57,6 @@
 				data: dataByDate[date][period] // Will be either the entry or null
 			}))
 		}));
-		console.log(attendanceData);
 	}
 
 	let selectedPeriods = new Map();
@@ -72,17 +70,11 @@
 		}
 		// Trigger reactivity
 		selectedPeriods = new Map(selectedPeriods);
-		// Add logic to handle the change, such as updating the backend
 	}
 
 	$: selectedClasses = (date, period) => {
 		return selectedPeriods.has(`${date}-${period}`) ? 'bg-blue-500' : 'bg-transparent';
 	};
-
-	function handleCheckboxChange(event, date, period) {
-		// Logic to handle checkbox change
-		// You might want to update the rawData or send this information to your backend
-	}
 </script>
 
 <div class="overflow-auto h-screen/2 bg-white rounded-lg shadow-md p-4">
