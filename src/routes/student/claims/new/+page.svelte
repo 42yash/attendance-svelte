@@ -2,6 +2,7 @@
 	import { userSession } from './../../../../server.js';
 	import AttendanceTable, { Periods } from '../../AttendanceTable.svelte';
 	import { env } from '$lib/env';
+	import { goto } from '$app/navigation';
 
 	let reason = '';
 	let description = '';
@@ -27,7 +28,9 @@
 		});
 
 		if (response.ok) {
-			console.log(await response.json());
+			data = await response.json();
+			console.log(data);
+			goto(`${data.ID}`);
 		} else {
 			console.log(response);
 		}
@@ -35,36 +38,43 @@
 </script>
 
 <form
-	class="p-8 bg-white rounded-lg shadow-lg shadow-primary grid grid-cols-1 sm:grid-cols-2 gap-4 mx-32 m-8"
+	class="grid grid-cols-1 gap-4 p-8 m-8 mx-32 bg-white rounded-lg shadow-lg shadow-primary sm:grid-cols-2"
 	on:submit|preventDefault={handleSubmit}
 >
-	<h2 class="text-2xl font-semibold col-span-2 self-center px-4">New Claim</h2>
+	<div class="flex items-center self-center justify-between col-span-2 p-4">
+		<h2 class="px-4 text-4xl font-semibold">New Claim</h2>
+		<button
+			type="button"
+			class="px-8 text-l btn-warning btn btn-outline"
+			on:click={() => goto('/student/claims')}>Discard</button
+		>
+	</div>
 
 	<div class="col-span-1">
-		<div class="form-control col-span-1 p-4 space-y-1">
+		<div class="col-span-1 p-4 space-y-1 form-control">
 			<label class="label">
 				<span class="label-text">Reason</span>
 			</label>
-			<input type="text" class="input input-bordered w-full max-w-s" bind:value={reason} />
+			<input type="text" class="w-full input input-bordered max-w-s" bind:value={reason} />
 		</div>
-		<div class="form-control col-span-1 p-4 space-y-1">
+		<div class="col-span-1 p-4 space-y-1 form-control">
 			<label class="label">
 				<span class="label-text">Description</span>
 			</label>
 			<textarea
 				type="text"
-				class="textarea textarea-bordered w-full max-w-s h-40"
+				class="w-full h-40 textarea textarea-bordered max-w-s"
 				bind:value={description}
 			/>
 		</div>
 	</div>
 
-	<div class="form-control p-4 space-y-1">
+	<div class="p-4 space-y-1 form-control">
 		<label class="label">
 			<span class="label-text">Upload files</span>
 		</label>
-		<input type="file" class="file-input file-input-bordered w-full max-w-s" bind:files={file} />
-		<p class="prose p-1">
+		<input type="file" class="w-full file-input file-input-bordered max-w-s" bind:files={file} />
+		<p class="p-1 prose">
 			<small
 				>Note: Please only upload scans or softcopy of originals. Do not apply any filters or crop
 				the document. All the images should be clear and the dates should be clearly visible.</small
@@ -76,7 +86,7 @@
 		<AttendanceTable />
 	</div>
 
-	<div class="col-span-2 text-end p-4 self-center">
+	<div class="self-center col-span-2 p-4 text-end">
 		<button type="submit" class="btn btn-outline btn-success">Submit</button>
 	</div>
 </form>
