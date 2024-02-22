@@ -1,18 +1,36 @@
 <script>
-	import AttendanceTable from '../../AttendanceTable.svelte';
+	import { userSession } from './../../../../server.js';
+	import AttendanceTable, { Periods } from '../../AttendanceTable.svelte';
+	import { env } from '$lib/env';
 
 	let reason = '';
 	let description = '';
 	let file;
 	let formData;
 
-	function handleSubmit() {
-		formData = {
+	async function handleSubmit() {
+		let data = Array.from(Periods.keys());
+		formData = JSON.stringify({
 			reason,
 			description,
-			file
-		};
-		console.log(formData);
+			file,
+			data
+		});
+
+		const response = await fetch(`${env.GO_API_KEY}/claims/create`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${$userSession.token}`
+			},
+			body: formData
+		});
+
+		if (response.ok) {
+			console.log(await response.json());
+		} else {
+			console.log(response);
+		}
 	}
 </script>
 
@@ -33,7 +51,7 @@
 			<label class="label">
 				<span class="label-text">Description</span>
 			</label>
-			<input
+			<textarea
 				type="text"
 				class="textarea textarea-bordered w-full max-w-s h-40"
 				bind:value={description}
@@ -46,6 +64,12 @@
 			<span class="label-text">Upload files</span>
 		</label>
 		<input type="file" class="file-input file-input-bordered w-full max-w-s" bind:files={file} />
+		<p class="prose p-1">
+			<small
+				>Note: Please only upload scans or softcopy of originals. Do not apply any filters or crop
+				the document. All the images should be clear and the dates should be clearly visible.</small
+			>
+		</p>
 	</div>
 
 	<div class="col-span-2">

@@ -12,7 +12,7 @@
 		}
 		const response = await fetch(`${env.GO_API_KEY}/student/info`, {
 			headers: {
-				Authorization: `${$userSession.token}`
+				Authorization: `Bearer ${$userSession.token}`
 			}
 		});
 

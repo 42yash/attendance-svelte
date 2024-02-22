@@ -1,3 +1,7 @@
+<script context="module">
+	export let Periods = new Map();
+</script>
+
 <script>
 	import { onMount } from 'svelte';
 	import { env } from '$lib/env';
@@ -16,7 +20,7 @@
 		}
 		const response = await fetch(`${env.GO_API_KEY}/student/info`, {
 			headers: {
-				Authorization: `${$userSession.token}`
+				Authorization: `Bearer ${$userSession.token}`
 			}
 		});
 
@@ -60,7 +64,6 @@
 	}
 
 	let selectedPeriods = new Map();
-
 	function togglePeriod(date, period) {
 		const key = `${date}-${period}`;
 		if (selectedPeriods.has(key)) {
@@ -70,6 +73,7 @@
 		}
 		// Trigger reactivity
 		selectedPeriods = new Map(selectedPeriods);
+		Periods = selectedPeriods;
 	}
 
 	$: selectedClasses = (date, period) => {
