@@ -14,16 +14,16 @@
 	};
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 p-6 bg-slate-200 h-full justify-center gap-4 w-full">
+<div class="grid justify-center w-full h-full grid-cols-1 gap-4 p-6 md:grid-cols-2 bg-slate-200">
 	<!-- Notifications - shown second on mobile -->
 	<div class="order-2 md:order-1">
 		<!-- Notifications Title -->
-		<div class="lg:mx-20 p-8 space-y-4 h-full flex flex-col">
-			<div class="bg-white rounded-xl shadow p-4 space-y-4 shadow-2xl">
+		<div class="flex flex-col h-full p-8 space-y-4 lg:mx-20">
+			<div class="p-4 space-y-4 bg-white shadow shadow-2xl rounded-xl">
 				<h3 class="text-3xl">Notifications</h3>
 			</div>
 			<!-- Notifications Cards -->
-			<div class="space-y-4 flex-grow flex flex-col">
+			<div class="flex flex-col flex-grow space-y-4">
 				<NotificationCard data={alerts} />
 				<NotificationCard data={notifications} />
 			</div>
