@@ -8,6 +8,8 @@ export let errormessage = '';
 export const userSession = writable({ isAuthenticated: false, token: null });
 
 export async function handleLogin(username, password) {
+	userSession.set({ isAuthenticated: false, token: null });
+	localStorage.removeItem('token'); // Remove token from localStorage
 	const response = await fetch(`${env.GO_API_KEY}/login`, {
 		method: 'POST',
 		headers: {
@@ -28,8 +30,7 @@ export async function handleLogin(username, password) {
 			// Navigate to the student dashboard
 			goto('/student');
 		} else if (payload.usertype === 'teacher') {
-			// Navigate to the teacher dashboard
-			// $navigate('/teacher');
+			goto('/teacher');
 		} else if (payload.usertype === 'admin') {
 			// Navigate to the admin dashboard
 			// $navigate('/admin');
