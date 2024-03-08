@@ -1,12 +1,9 @@
 <script>
-	export let items = [
-		{ name: 'Attendance', href: '/student/attendance' },
-		{ name: 'Claims', href: '/student/claims' },
-		{ name: 'New Claim', href: '/student/claims/new' }
-	];
+	import DrawerAccordian from './DrawerAccordian.svelte';
+	export let items;
 </script>
 
-<div class="drawer">
+<div class="z-[2] drawer">
 	<input id="my-drawer" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content">
 		<label for="my-drawer" class="btn btn-square btn-ghost">
@@ -14,7 +11,7 @@
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
-				class="inline-block w-7 h-7 stroke-current"
+				class="inline-block stroke-current w-7 h-7"
 			>
 				<path
 					stroke-linecap="round"
@@ -26,13 +23,13 @@
 		</label>
 	</div>
 	<div class="drawer-side">
-		<ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+		<ul class="min-h-full p-4 menu w-80 bg-base-200 text-base-content">
 			<label for="my-drawer" class="btn btn-square btn-ghost drawer overlay">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
-					class="inline-block w-7 h-7 stroke-current"
+					class="inline-block stroke-current w-7 h-7"
 				>
 					<path
 						stroke-linecap="round"
@@ -44,8 +41,15 @@
 			</label>
 			<!-- Sidebar content here -->
 			{#each items as item (item.name)}
-				<li><a href={item.href}>{item.name}</a></li>
+				{#if item.name === 'Home'}
+					<div class="text-xl font-medium collapse-title"><a href={item.href}>{item.name}</a></div>
+				{:else}
+					<DrawerAccordian title={item.name} items={item.subitems} />
+				{/if}
 			{/each}
+			<div class="hidden">
+				<DrawerAccordian title="" items={[]} />
+			</div>
 		</ul>
 	</div>
 </div>
