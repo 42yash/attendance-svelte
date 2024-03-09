@@ -34,10 +34,11 @@
 						<div class="text-red-700 alert-error">{errormessage}</div>
 					{/if}
 					<div class="form-control">
-						<label class="label">
+						<label for="username" class="label">
 							<span class="label-text">Username</span>
 						</label>
 						<input
+							id="username"
 							required
 							type="text"
 							placeholder="Username"
@@ -46,10 +47,11 @@
 						/>
 					</div>
 					<div class="form-control">
-						<label class="label">
+						<label class="label" for="password">
 							<span class="label-text">Password</span>
 						</label>
 						<input
+							id="password"
 							required
 							type="password"
 							placeholder="Password"
