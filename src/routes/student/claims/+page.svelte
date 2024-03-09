@@ -4,6 +4,7 @@
 	import { userSession } from '../../../server.js';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment'; // Import the browser variable to check if we're on the client-side
+	import ClaimType from './ClaimType.svelte';
 
 	let rawData;
 	let entries;
@@ -34,14 +35,15 @@
 	});
 
 	function processData(data) {
-		entries = data
-			.map((claim) => ({
-				id: claim.ID,
-				reason: claim.Reason,
-				status: claim.Status,
-				date: claim.CreatedAt.slice(0, 10)
-			}))
-			.reverse();
+		// Sort data by CreatedAt field from new to old
+		data.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
+
+		entries = data.map((claim) => ({
+			id: claim.ID,
+			reason: claim.Reason,
+			status: claim.Status,
+			date: claim.CreatedAt.slice(0, 10)
+		}));
 
 		totalPages = Math.ceil(entries.length / entriesPerPage);
 	}
@@ -60,8 +62,9 @@
 
 {#if rawData}
 	<div class="container flex flex-col p-8 m-8 mx-auto bg-white rounded shadow-2xl">
+		<h1 class="px-4 mb-4 text-4xl font-bold">Leaves</h1>
 		<div class="flex items-center justify-between p-4 mb-4">
-			<h1 class="text-4xl font-bold">Medical Leaves</h1>
+			<ClaimType />
 			<button class="px-8 text-l btn" on:click={() => goto('/student/claims/new')}>New</button>
 		</div>
 		<div class="flex-grow p-4 overflow-x-auto">

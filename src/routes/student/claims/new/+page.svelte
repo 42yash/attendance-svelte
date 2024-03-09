@@ -63,7 +63,7 @@
 			</label>
 			<textarea
 				type="text"
-				class="w-full h-40 textarea textarea-bordered max-w-s"
+				class="w-full h-40 resize-none textarea textarea-bordered max-w-s"
 				bind:value={description}
 			/>
 		</div>
