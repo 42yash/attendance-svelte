@@ -1,11 +1,21 @@
 <script>
-	import { handleLogin, errormessage } from '../server.js';
+	import { handleLogin } from '../server.js';
 
 	let localUsername = '';
 	let localPassword = '';
+	let errormessage = '';
+
+	let canSubmit = false;
+
+	// Reactive statement that updates canSubmit based on the values of localUsername and localPassword
+	$: canSubmit = localUsername.trim() !== '' && localPassword.trim() !== '';
 
 	async function login() {
-		await handleLogin(localUsername, localPassword);
+		if (!canSubmit) {
+			errormessage = 'Please fill in all fields';
+			return;
+		}
+		errormessage = await handleLogin(localUsername, localPassword);
 	}
 
 	import '../app.css';
@@ -21,13 +31,14 @@
 				<div class="card-body">
 					<h2 class="card-title">Login</h2>
 					{#if errormessage}
-						<div class="alert alert-error">{errormessage}</div>
+						<div class="text-red-700 alert-error">{errormessage}</div>
 					{/if}
 					<div class="form-control">
 						<label class="label">
 							<span class="label-text">Username</span>
 						</label>
 						<input
+							required
 							type="text"
 							placeholder="Username"
 							class="input input-bordered"
@@ -39,6 +50,7 @@
 							<span class="label-text">Password</span>
 						</label>
 						<input
+							required
 							type="password"
 							placeholder="Password"
 							class="input input-bordered"
