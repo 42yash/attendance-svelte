@@ -5,12 +5,22 @@
 
 	const alerts = {
 		title: 'Action Needed',
-		notifications: ['Alert 1', 'Alert 2', 'Alert 3', 'Alert 4']
+		notifications: [
+			'Photo upload for convocation',
+			'Application form for Mid Semester Repeat',
+			'Open Elective Application',
+			'Exam Timetable'
+		]
 	};
 
 	const notifications = {
 		title: 'Notices',
-		notifications: ['Notification 1', 'Notification 2', 'Notification 3', 'Notification 4']
+		notifications: [
+			'Advisory on Lost and Found Articles',
+			'Academic Calender 2024-25',
+			'Placements Notfication',
+			'Guidelines for photo upload for Convocation'
+		]
 	};
 </script>
 

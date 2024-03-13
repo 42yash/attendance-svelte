@@ -3,46 +3,32 @@
 	import AttendanceTable, { Periods } from '../../AttendanceTable.svelte';
 	import { env } from '$lib/env';
 	import { goto } from '$app/navigation';
-	import supabase from "$lib/supabase"
-	import { v4 as uuidv4 } from 'uuid';
+	import Dropzone from './Dropzone.svelte';
 
 	let reason = '';
 	let description = '';
 	let formData;
-	let files = [];
-	let fileUrls = [];
-	
-	async function uploadFiles() {
-  // Assuming you have a bucket named 'uploads'
-  const bucketName = 'medical-docs';
+	let dropzone;
+	let uploadedFilesInfo = []; // To store the data received from the event
 
-  // Iterate over the files array and upload each file
-  for (const file of files) {
-    const fileExtension = file.name.split('.').pop(); // Extract file extension
-    const fileName = `${uuidv4()}.${fileExtension}`; // Generate a new file name with the UUID
-    const filePath = `public/${fileName}`; // Define the upload path
-
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file);
-
-    if (error) {
-      console.error('Error uploading file:', error);
-      return;
-    } else {
-			fileUrls.push(data.path);
-		}
-  }
-}
+	function handleUploadComplete(event) {
+		uploadedFilesInfo = event.detail.uploadedFiles;
+		console.log('from hupc', uploadedFilesInfo); // You can now use this data as needed
+	}
 
 	async function handleSubmit() {
-		await uploadFiles();
+		if (dropzone) {
+			await dropzone.uploadFiles();
+		}
+		const fileUrls = uploadedFilesInfo.map((file) => file.path);
+		const filenames = uploadedFilesInfo.map((file) => file.name);
 		let data = Array.from(Periods.keys());
 		formData = JSON.stringify({
 			reason,
 			description,
 			files: fileUrls,
-			data
+			data,
+			filenames: filenames
 		});
 
 		const response = await fetch(`${env.GO_API_KEY}/claims/create`, {
@@ -100,7 +86,8 @@
 		<label class="label">
 			<span class="label-text">Upload files</span>
 		</label>
-		<input type="file" multiple class="w-full file-input file-input-bordered max-w-s" bind:files={files} />
+		<!-- 	<input type="file" multiple class="w-full file-input file-input-bordered max-w-s" bind:files /> -->
+		<Dropzone bind:this={dropzone} on:uploadcomplete={handleUploadComplete} />
 		<p class="p-1 prose">
 			<small
 				>Note: Please only upload scans or softcopy of originals. Do not apply any filters or crop
