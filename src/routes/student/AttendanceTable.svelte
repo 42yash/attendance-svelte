@@ -47,8 +47,8 @@
 					dataByDate[entry.Date][period] = null; // Initialize all periods with null
 				});
 			}
-			// Only consider the entry if the student was absent
-			if (!entry.IsPresent) {
+			// Only consider the entry if the student was absent or hasn't claimed that period
+			if (!entry.IsPresent & !entry.IsClaimed) {
 				dataByDate[entry.Date][entry.Period] = entry;
 			}
 		});
@@ -61,6 +61,11 @@
 				data: dataByDate[date][period] // Will be either the entry or null
 			}))
 		}));
+
+		attendanceData.sort((a, b) => {
+			// Convert date strings to Date objects and compare
+			return new Date(a.date) - new Date(b.date);
+		});
 	}
 
 	let selectedPeriods = new Map();
