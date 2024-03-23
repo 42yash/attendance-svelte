@@ -9,6 +9,9 @@
 	export let params = $page.params;
 	let claimid = params.claimid;
 	let rawData;
+	let teacherData;
+	let newData;
+	let reason;
 
 	// onMount send request to api/claims/[claimid]
 	onMount(async () => {
@@ -16,6 +19,19 @@
 		if (token) {
 			userSession.set({ isAuthenticated: true, role: null, token });
 		}
+
+		const teacherSelf = await fetch(`${env.GO_API_KEY}/teacher/self`, {
+			headers: {
+				Authorization: `Bearer ${$userSession.token}`
+			}
+		});
+
+		if (teacherSelf.ok) {
+			teacherData = await teacherSelf.json();
+		} else {
+			console.error('Failed to fetch teacher info');
+		}
+
 		const response = await fetch(`${env.GO_API_KEY}/claims/${claimid}`, {
 			headers: {
 				Authorization: `Bearer ${$userSession.token}`
@@ -24,14 +40,61 @@
 
 		if (response.ok) {
 			rawData = await response.json();
-			console.log(rawData);
+			newData = JSON.parse(JSON.stringify(rawData));
 		} else {
 			console.error('Failed to fetch student info');
 		}
 	});
+
+	function handleSubmit() {
+		function compareData(newData, rawData) {
+			if (newData.ClaimReviews.length !== rawData.ClaimReviews.length) {
+				return false;
+			}
+
+			for (let i = 0; i < newData.ClaimReviews.length; i++) {
+				if (newData.ClaimReviews[i].Status !== rawData.ClaimReviews[i].Status) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if (compareData(newData, rawData)) {
+			goto('/teacher/review/medical');
+		} else {
+			my_modal_3.showModal();
+		}
+	}
+
+	function handleSubmitMessage() {
+		newData.ClaimReviews.forEach(async (claim) => {
+			if (claim.Teacher.ID === teacherData.ID) {
+				claim.Message = reason;
+				const response = await fetch(`${env.GO_API_KEY}/teacher/claims/${claim.ID}`, {
+					method: 'PUT',
+					headers: {
+						Authorization: `Bearer ${$userSession.token}`
+					},
+					body: JSON.stringify(claim)
+				});
+
+				if (response.ok) {
+					console.log('Claim updated');
+				} else {
+					console.error('Failed to update claim');
+					goto('/teacher/failure');
+					return;
+				}
+			}
+		});
+
+		goto('/teacher/review/medical');
+	}
 </script>
 
-{#if rawData}
+{#if newData}
 	<div class="container p-8 m-8">
 		<div class="space-y-4 shadow-2xl card-body card-normal bg-base-100 rounded-xl">
 			<div class="flex items-center justify-between mb-4">
@@ -70,12 +133,18 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each rawData.ClaimReviews as claim}
+					{#each newData.ClaimReviews as claim}
 						<tr>
 							<td class="border">{claim.Attendance.Course}</td>
 							<td class="border">{claim.Teacher.Name}</td>
 							<td class="border">
-								{#if claim.Status === 'pending'}
+								{#if teacherData.ID === claim.Teacher.ID}
+									<select bind:value={claim.Status} class="w-full max-w-xs select select-bordered">
+										<option value="pending" selected={claim.Status === 'pending'}>Pending</option>
+										<option value="approved" selected={claim.Status === 'approved'}>Approve</option>
+										<option value="rejected" selected={claim.Status === 'rejected'}>Reject</option>
+									</select>
+								{:else if claim.Status === 'pending'}
 									Pending
 								{:else if claim.Status === 'approved'}
 									Approved
@@ -89,6 +158,22 @@
 					{/each}
 				</tbody>
 			</table>
+			<div class="mt-4">
+				<button class="btn btn-primary" on:click={handleSubmit}>Submit</button>
+				<dialog id="my_modal_3" class="modal">
+					<div class="modal-box">
+						<form method="dialog">
+							<button class="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">✕</button>
+						</form>
+						<div class="flex flex-col gap-5 p-5">
+							<p class="text-md">Message</p>
+							<textarea class="textarea textarea-bordered" placeholder="Reason" bind:value={reason}
+							></textarea>
+							<button class="btn btn-primary" on:click={handleSubmitMessage}>Submit</button>
+						</div>
+					</div>
+				</dialog>
+			</div>
 		</div>
 	</div>
 {/if}

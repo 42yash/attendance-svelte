@@ -1,5 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
 	import ReviewTable from './ReviewTable.svelte';
 	let selectedOption = 'Pending';
 
