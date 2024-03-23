@@ -36,7 +36,20 @@
 		<div class="space-y-4 shadow-2xl card-body card-normal bg-base-100 rounded-xl">
 			<div class="flex items-center justify-between mb-4">
 				<h2 class="text-4xl">Medical Leave #{rawData.StudentId}{rawData.ID}</h2>
-				<button class="px-8 text-l btn" on:click={() => goto('/student/claims/')}>Back</button>
+				<button class="px-8 text-l btn" on:click={() => goto('/teacher/review/medical')}
+					>Back</button
+				>
+			</div>
+
+			<div class="form-group">
+				<label class="text-xl" for="student-info">Student Info</label>
+
+				<p class="text-md" for="register-number">
+					Register Number: {rawData.Student.RegisterNumber}
+				</p>
+				<p class="text-md" for="name">Name: {rawData.Student.Name}</p>
+				<p class="text-md" for="class">Class: {rawData.Student.Class}</p>
+				<p class="text-md" for="email">Email: {rawData.Student.Email}</p>
 			</div>
 
 			<div class="form-group">

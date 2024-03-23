@@ -1,21 +1,10 @@
 <script>
 	import { goto } from '$app/navigation';
 
-	export let data;
-	let entries;
+	export let entries;
 	let currentPage = 1;
 	const entriesPerPage = 5;
 	let totalPages;
-
-	// Sort data by CreatedAt field from new to old
-	data.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
-
-	entries = data.map((claim) => ({
-		id: claim.ID,
-		reason: claim.Reason,
-		status: claim.Status,
-		date: claim.CreatedAt.slice(0, 10)
-	}));
 
 	totalPages = Math.ceil(entries.length / entriesPerPage);
 
@@ -38,16 +27,16 @@
 				<th class="border">Serial No.</th>
 				<th class="border">Date Created</th>
 				<th class="border">Reason</th>
-				<th class="border">IPM Status</th>
+				<th class="border">Class</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each paginatedEntries as { id, date, reason, status }, index}
-				<tr class="hover:bg-stone-300" on:click={() => goto(`/student/claims/${id}`)}>
+			{#each paginatedEntries as { id, date, reason, program }, index}
+				<tr class="hover:bg-stone-300" on:click={() => goto(`/teacher/review/${id}`)}>
 					<td class="border">{index + 1 + (currentPage - 1) * entriesPerPage}</td>
 					<td class="border">{date}</td>
 					<td class="border">{reason}</td>
-					<td class="border">{status}</td>
+					<td class="border">{program}</td>
 				</tr>
 			{/each}
 		</tbody>
