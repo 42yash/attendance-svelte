@@ -35,7 +35,7 @@ export async function handleLogin(username, password) {
 		} else if (payload.usertype === 'admin') {
 			// $navigate('/admin');
 		} else if (payload.usertype === 'ipm') {
-			// $navigate('/ipm');
+			goto('/ipm');
 		} else {
 			// Handle unknown role
 			console.error('Unknown role');
