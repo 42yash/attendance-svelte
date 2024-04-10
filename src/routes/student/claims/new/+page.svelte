@@ -10,6 +10,13 @@
 	let formData;
 	let dropzone;
 	let uploadedFilesInfo = []; // To store the data received from the event
+	let isMenstrual = false;
+
+	$: if (isMenstrual) {
+		if (reason == '') {
+			reason = 'Menstrual Leave';
+		}
+	}
 
 	function handleUploadComplete(event) {
 		uploadedFilesInfo = event.detail.uploadedFiles;
@@ -94,6 +101,12 @@
 				the document. All the images should be clear and the dates should be clearly visible.</small
 			>
 		</p>
+		<div class="form-control space-y-1">
+			<label class="cursor-pointer label justify-start gap-4">
+				<span class="label-text">Menstrual Leave</span>
+				<input type="checkbox" class="checkbox checkbox-error" bind:checked={isMenstrual} />
+			</label>
+		</div>
 	</div>
 
 	<div class="col-span-2">

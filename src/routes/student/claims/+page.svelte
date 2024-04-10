@@ -17,12 +17,6 @@
 				Medical Leave
 			</button>
 			<button
-				class={`join-item p-4 btn ${selectedOption === 'menstural' ? 'btn-active' : ''} `}
-				on:click={() => (selectedOption = 'menstural')}
-			>
-				Menstural Leave
-			</button>
-			<button
 				class={`join-item p-4 btn ${selectedOption === 'coCurricular' ? 'btn-active' : ''} `}
 				on:click={() => (selectedOption = 'coCurricular')}
 			>
@@ -33,8 +27,6 @@
 	</div>
 	{#if selectedOption === 'medical'}
 		<MedicalTable />
-	{:else if selectedOption === 'menstural'}
-		<MensturalTable />
 	{:else}
 		<CoCurricularTable />
 	{/if}
