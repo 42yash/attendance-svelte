@@ -12,6 +12,8 @@
 	let teacherData;
 	let newData;
 	let reason;
+	let formattedStartDate;
+	let formattedEndDate;
 
 	// onMount send request to api/claims/[claimid]
 	onMount(async () => {
@@ -41,6 +43,15 @@
 		if (response.ok) {
 			rawData = await response.json();
 			newData = JSON.parse(JSON.stringify(rawData));
+			console.log(newData);
+			let attendanceDates = rawData.ClaimReviews.map((review) =>
+				Date.parse(review.Attendance.Date)
+			);
+			let startDate = new Date(Math.min(...attendanceDates));
+			let endDate = new Date(Math.max(...attendanceDates));
+
+			formattedStartDate = new Date(startDate).toLocaleDateString();
+			formattedEndDate = new Date(endDate).toLocaleDateString();
 		} else {
 			console.error('Failed to fetch student info');
 		}
@@ -57,7 +68,6 @@
 					return false;
 				}
 			}
-
 			return true;
 		}
 
@@ -99,9 +109,12 @@
 		<div class="space-y-4 shadow-2xl card-body card-normal bg-base-100 rounded-xl">
 			<div class="flex items-center justify-between mb-4">
 				<h2 class="text-4xl">Medical Leave #{rawData.StudentId}{rawData.ID}</h2>
-				<button class="px-8 text-l btn" on:click={() => goto('/teacher/review/medical')}
-					>Back</button
-				>
+				<div class="flex items-center justify-center gap-4">
+					<p class="text-md">{rawData.Status}</p>
+					<button class="px-8 text-l btn" on:click={() => goto('/teacher/review/medical')}
+						>Back</button
+					>
+				</div>
 			</div>
 
 			<div class="form-group">
@@ -116,12 +129,28 @@
 			</div>
 
 			<div class="form-group">
+				<label class="text-xl" for="reason">Date:</label>
+				<p class="text-md">{formattedStartDate} to {formattedEndDate}</p>
+			</div>
+
+			<div class="form-group">
 				<label class="text-xl" for="reason">Reason:</label>
 				<p class="text-md">{rawData.Reason}</p>
 			</div>
 			<div class="form-group">
 				<label class="text-xl" for="description">Description:</label>
 				<p class="text-md">{rawData.Description}</p>
+			</div>
+			<div class="form-group">
+				<label class="text-xl" for="description">Files:</label>
+				{#each rawData.Files as file, index (index)}
+					<p class="text-md">
+						<a
+							href={`https://nuccnlggddczpeykmixe.supabase.co/storage/v1/object/public/medical-docs/${file.Path}`}
+							target="_blank">{file.Name}</a
+						>
+					</p>
+				{/each}
 			</div>
 			<h3 class="text-xl">Classes Missed:</h3>
 			<table class="border table-md">
@@ -133,12 +162,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each newData.ClaimReviews as claim}
+					{#each newData.ClaimReviews as claim, index (index)}
 						<tr>
 							<td class="border">{claim.Attendance.Course}</td>
 							<td class="border">{claim.Teacher.Name}</td>
 							<td class="border">
-								{#if teacherData.ID === claim.Teacher.ID}
+								{#if rawData.ClaimReviews[index].Status === 'approved'}
+									Approved
+								{:else if (teacherData.ID === claim.Teacher.ID) & (rawData.Status === 'Pending')}
 									<select bind:value={claim.Status} class="w-full max-w-xs select select-bordered">
 										<option value="pending" selected={claim.Status === 'pending'}>Pending</option>
 										<option value="approved" selected={claim.Status === 'approved'}>Approve</option>
@@ -159,7 +190,9 @@
 				</tbody>
 			</table>
 			<div class="mt-4">
-				<button class="btn btn-primary" on:click={handleSubmit}>Submit</button>
+				{#if rawData.Status === 'Pending'}
+					<button class="btn btn-primary" on:click={handleSubmit}>Submit</button>
+				{/if}
 				<dialog id="my_modal_3" class="modal">
 					<div class="modal-box">
 						<form method="dialog">
@@ -167,7 +200,11 @@
 						</form>
 						<div class="flex flex-col gap-5 p-5">
 							<p class="text-md">Message</p>
-							<textarea class="textarea textarea-bordered" placeholder="Reason" bind:value={reason}
+							<textarea
+								class="textarea textarea-bordered"
+								placeholder="Reason"
+								bind:value={reason}
+								required
 							></textarea>
 							<button class="btn btn-primary" on:click={handleSubmitMessage}>Submit</button>
 						</div>

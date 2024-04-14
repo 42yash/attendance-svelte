@@ -16,7 +16,8 @@
 			autoProcessQueue: false,
 			clickable: true,
 			addRemoveLinks: true,
-			dictRemoveFile: 'Remove'
+			dictRemoveFile: 'Remove',
+			acceptedFiles: 'image/*,application/pdf'
 		});
 
 		dropzone.on('addedfile', (file) => {

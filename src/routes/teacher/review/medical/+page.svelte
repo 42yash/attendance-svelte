@@ -25,6 +25,7 @@
 
 			if (response.ok) {
 				rawData = await response.json();
+				console.log(rawData);
 				rawData.sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
 				rawData.forEach((claim) => {
 					entries.push({
@@ -44,7 +45,7 @@
 
 <div class="container flex flex-col p-8 m-8 mx-auto bg-white rounded shadow-2xl">
 	<h1 class="px-4 mb-4 text-4xl font-bold">Review Medical Leaves</h1>
-	<div class="flex items-center justify-between p-4 mb-4">
+	<!-- <div class="flex items-center justify-between p-4 mb-4">
 		<div class="btn-group join">
 			<button
 				class={`join-item p-4 btn ${selectedOption === 'Pending' ? 'btn-active' : ''} `}
@@ -65,7 +66,7 @@
 				Archived Leave
 			</button>
 		</div>
-	</div>
+	</div> -->
 	{#await promise}
 		Loading...
 	{:then data}

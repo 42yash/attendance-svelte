@@ -11,6 +11,8 @@
 	let dropzone;
 	let uploadedFilesInfo = []; // To store the data received from the event
 	let isMenstrual = false;
+	let dropzoneError = '';
+	let periodError = '';
 
 	$: if (isMenstrual) {
 		if (reason == '') {
@@ -26,7 +28,17 @@
 	async function handleSubmit() {
 		if (dropzone) {
 			await dropzone.uploadFiles();
+			if ((uploadedFilesInfo.length == 0) & (isMenstrual == false)) {
+				dropzoneError = 'Please upload at least one file';
+				return;
+			}
 		}
+
+		if (Periods.size == 0) {
+			periodError = 'Please select at least one period';
+			return;
+		}
+
 		const fileUrls = uploadedFilesInfo.map((file) => file.path);
 		const filenames = uploadedFilesInfo.map((file) => file.name);
 		let data = Array.from(Periods.keys());
@@ -75,13 +87,14 @@
 			<label class="label">
 				<span class="label-text">Reason</span>
 			</label>
-			<input type="text" class="w-full input input-bordered max-w-s" bind:value={reason} />
+			<input required type="text" class="w-full input input-bordered max-w-s" bind:value={reason} />
 		</div>
 		<div class="col-span-1 p-4 space-y-1 form-control">
 			<label class="label">
 				<span class="label-text">Description</span>
 			</label>
 			<textarea
+				required
 				type="text"
 				class="w-full h-40 resize-none textarea textarea-bordered max-w-s"
 				bind:value={description}
@@ -93,7 +106,9 @@
 		<label class="label">
 			<span class="label-text">Upload files</span>
 		</label>
-		<!-- 	<input type="file" multiple class="w-full file-input file-input-bordered max-w-s" bind:files /> -->
+		<p class="p-1 text-error">
+			<small>{dropzoneError}</small>
+		</p>
 		<Dropzone bind:this={dropzone} on:uploadcomplete={handleUploadComplete} />
 		<p class="p-1 prose">
 			<small
@@ -110,6 +125,9 @@
 	</div>
 
 	<div class="col-span-2">
+		<p class="p-1 text-error">
+			<small>{periodError}</small>
+		</p>
 		<AttendanceTable />
 	</div>
 

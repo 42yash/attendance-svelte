@@ -73,9 +73,12 @@
 		<div class="space-y-4 shadow-2xl card-body card-normal bg-base-100 rounded-xl">
 			<div class="flex items-center justify-between mb-4">
 				<h2 class="text-4xl">Medical Leave #{rawData.StudentId}{rawData.ID}</h2>
-				<button class="px-8 text-l btn" on:click={() => goto('/teacher/review/medical')}
-					>Back</button
-				>
+				<div class="flex items-center justify-center gap-4">
+					<p class="text-md">{rawData.Status}</p>
+					<button class="px-8 text-l btn" on:click={() => goto('/teacher/review/medical')}
+						>Back</button
+					>
+				</div>
 			</div>
 
 			<div class="form-group">
@@ -96,6 +99,17 @@
 			<div class="form-group">
 				<label class="text-xl" for="description">Description:</label>
 				<p class="text-md">{rawData.Description}</p>
+			</div>
+			<div class="form-group">
+				<label class="text-xl" for="description">Files:</label>
+				{#each rawData.Files as file, index (index)}
+					<p class="text-md">
+						<a
+							href={`https://nuccnlggddczpeykmixe.supabase.co/storage/v1/object/public/medical-docs/${file.Path}`}
+							target="_blank">{file.Name}</a
+						>
+					</p>
+				{/each}
 			</div>
 			<h3 class="text-xl">Classes Missed:</h3>
 			<table class="border table-md">
