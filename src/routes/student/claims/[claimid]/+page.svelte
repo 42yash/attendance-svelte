@@ -46,6 +46,10 @@
 				<h2 class="text-4xl">Medical Leave #{rawData.StudentId}{rawData.ID}</h2>
 				<div class="flex items-center justify-center gap-4">
 					<p class="text-md">{rawData.Status}</p>
+					<button
+						class="px-8 text-l btn"
+						on:click={() => goto(`/student/claims/new/recur/${claimid}`)}>Reccur</button
+					>
 					<button class="px-8 text-l btn" on:click={() => goto('/student/claims/')}>Back</button>
 				</div>
 			</div>
@@ -94,7 +98,9 @@
 								{:else if claim.Status === 'approved'}
 									Approved
 								{:else if claim.Status === 'rejected'}
-									Rejected
+									<div class="tooltip" data-tip={claim.Message}>
+										<button class="btn">Rejected</button>
+									</div>
 								{:else}
 									Error
 								{/if}

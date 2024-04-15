@@ -5,7 +5,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { env } from '$lib/env';
-	import { userSession } from '../../server.js';
+	import { userSession } from '../../../server';
 
 	let attendanceData = []; // This will be populated with the processed data
 	let periods = ['S1', 'P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9']; // Assuming these are all the periods
@@ -48,7 +48,7 @@
 				});
 			}
 			// Only consider the entry if the student was absent or hasn't claimed that period
-			if (!entry.IsPresent & !entry.IsClaimed & !entry.IsApplied) {
+			if (!entry.IsPresent) {
 				dataByDate[entry.Date][entry.Period] = entry;
 			}
 		});
@@ -103,7 +103,7 @@
 					{#each day.periods as periodData}
 						{#if periodData.data}
 							<td
-								class="px-4 py-2 cursor-pointer border"
+								class="px-4 py-2 cursor-pointer border text-error"
 								class:bg-success={selectedPeriods.has(`${day.date}-${periodData.period}`)}
 								on:click={() => periodData.data && togglePeriod(day.date, periodData.period)}
 							>

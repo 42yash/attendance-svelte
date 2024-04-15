@@ -1,18 +1,43 @@
 <script>
-	import { userSession } from './../../../../server.js';
-	import AttendanceTable, { Periods } from '../../AttendanceTable.svelte';
+	import { userSession } from './../../../../../../server.js';
+	import AttendanceTable, { Periods } from '../../../../AttendanceTable.svelte';
 	import { env } from '$lib/env';
 	import { goto } from '$app/navigation';
-	import Dropzone from './Dropzone.svelte';
+	import Dropzone from './../../Dropzone.svelte';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
-	export let reason = '';
-	export let description = '';
+	let reason = '';
+	let description = '';
 	let formData;
 	let dropzone;
 	let uploadedFilesInfo = []; // To store the data received from the event
 	let isMenstrual = false;
 	let dropzoneError = '';
 	let periodError = '';
+	export let params = $page.params;
+	let claimid = params.claimid;
+	let rawData;
+
+	onMount(async () => {
+		const token = localStorage.getItem('token');
+		if (token) {
+			userSession.set({ isAuthenticated: true, role: null, token });
+		}
+		const response = await fetch(`${env.GO_API_KEY}/claims/${claimid}`, {
+			headers: {
+				Authorization: `Bearer ${$userSession.token}`
+			}
+		});
+
+		if (response.ok) {
+			rawData = await response.json();
+			reason = rawData.Reason;
+			description = rawData.Description;
+		} else {
+			console.error('Failed to fetch student info');
+		}
+	});
 
 	$: if (isMenstrual) {
 		if (reason == '') {
@@ -62,7 +87,7 @@
 		if (response.ok) {
 			data = await response.json();
 			console.log(data);
-			goto(`${data.ID}`);
+			goto(`../../${data.ID}`);
 		} else {
 			console.log(response);
 		}
